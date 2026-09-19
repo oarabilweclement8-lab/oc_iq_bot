@@ -4,13 +4,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.0'
-      - run: flutter pub get
-      - run: flutter build apk --release
+          channel: 'stable'
+      - name: Create full flutter project
+        run: |
+          flutter create temp_app --platforms=android --project-name oc_iq_bot
+          cp lib/main.dart temp_app/lib/main.dart
+          cp pubspec.yaml temp_app/pubspec.yaml
+          cd temp_app
+          flutter pub get
+          flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
           name: oc-iq-bot-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: temp_app/build/app/outputs/flutter-apk/app-release.apk
